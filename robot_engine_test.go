@@ -4,15 +4,29 @@ import "testing"
 
 func TestPlace(t *testing.T) {
 	table := Table{5, 5}
-	robot := Run(&table, PLACE, 1, 2, SOUTH)
-	if robot.X != 1 {
-		t.Errorf("robot.X is %d, want %d", robot.X, 1)
+	robot, _ := Run(&table, PLACE, 1, 2, SOUTH)
+	expectedRobot := Robot{1, 2, SOUTH}
+	if robot != expectedRobot {
+		t.Errorf("robot %+v is not equal %+v", robot, expectedRobot)
 	}
-	if robot.Y != 2 {
-		t.Errorf("robot.Y is %d, want %d", robot.Y, 2)
-	}
-	if robot.Facing != SOUTH {
-		t.Errorf("robot.Facing is %d, want %d", robot.Facing, SOUTH)
-	}
-
 }
+
+func TestPlaceOutOfBounds(t *testing.T) {
+	table := Table{5, 5}
+	_, err := Run(&table, PLACE, 5, 1, EAST)
+	if err == nil {
+		t.Errorf("putting robot out of bounds didn't cause error")
+	}
+}
+
+/*
+func TestMove(t *testing.T) {
+	table := Table{5, 5}
+	robot := Rorbot{1, 2, SOUTH}
+	newRobot := Run(&table, MOVE, robot)
+	expectedRobot := Robot{1, 1, SOUTH}
+	if newRobot != expectedRobot {
+		t.Errorf("robot %+v\n is not Robot{1,1,SOUTH}", robot)
+	}
+}
+*/
