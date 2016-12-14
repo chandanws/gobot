@@ -40,6 +40,15 @@ func TestMoveCommand(t *testing.T) {
 	}
 }
 
+func TestMoveCommandOutOfBounds(t *testing.T) {
+	table := Table{5, 5, Robot{1, 0, SOUTH}, true}
+	move := *new(Move)
+	_, err := move.Execute(table)
+	if err == nil {
+		t.Error("moving robot out of bounds didn't cause error")
+	}
+}
+
 func TestMoveNorth(t *testing.T) {
 	x, y := move(0, 0, NORTH)
 	if x != 0 || y != 1 {

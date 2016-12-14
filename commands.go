@@ -31,8 +31,11 @@ func (place Place) Execute(table Table) (Table, error) {
 }
 
 func (moveCmd Move) Execute(table Table) (Table, error) {
-	movedX, movedY := move(table.robot.x, table.robot.y, table.robot.facing)
-	return Table{table.height, table.width, Robot{movedX, movedY, table.robot.facing}, true}, nil
+	x, y := move(table.robot.x, table.robot.y, table.robot.facing)
+	if !table.contains(x, y) {
+		return *new(Table), outOfBoundsError{table, x, y}
+	}
+	return Table{table.height, table.width, Robot{x, y, table.robot.facing}, true}, nil
 }
 
 func move(x int, y int, facing Direction) (int, int) {
