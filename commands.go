@@ -17,9 +17,28 @@ type Place struct {
 type Move struct {
 }
 
+type Report struct {
+}
+
 type outOfBoundsError struct {
 	Table Table
 	x, y  int
+}
+
+var directionLookup = map[Direction]string{
+	NORTH: "NORTH",
+	WEST:  "WEST",
+	SOUTH: "SOUT",
+	EAST:  "EAST",
+}
+
+func (r Report) Execute(table Table) (Table, *string, error) {
+	if !table.initialized {
+		return *new(Table), nil, errors.New("Executing move on uninitialized table")
+	}
+	robot := table.robot
+	report := fmt.Sprintf("%d,%d,%s", robot.x, robot.y, directionLookup[robot.facing])
+	return table, &report, nil
 }
 
 func (err outOfBoundsError) Error() string {
@@ -28,18 +47,18 @@ func (err outOfBoundsError) Error() string {
 
 func (place Place) Execute(table Table) (Table, *string, error) {
 	if !table.contains(place.x, place.y) {
-		return *new(Table), nil, outOfBoundsError{table, place.x, place.y}
+		return table, nil, outOfBoundsError{table, place.x, place.y}
 	}
 	return Table{table.height, table.width, Robot{place.x, place.y, place.facing}, true}, nil, nil
 }
 
 func (moveCmd Move) Execute(table Table) (Table, *string, error) {
 	if !table.initialized {
-		return *new(Table), nil, errors.New("Executing move on uninitialized table")
+		return table, nil, errors.New("Executing move on uninitialized table")
 	}
 	x, y := move(table.robot.x, table.robot.y, table.robot.facing)
 	if !table.contains(x, y) {
-		return *new(Table), nil, outOfBoundsError{table, x, y}
+		return table, nil, outOfBoundsError{table, x, y}
 	}
 	return Table{table.height, table.width, Robot{x, y, table.robot.facing}, true}, nil, nil
 }

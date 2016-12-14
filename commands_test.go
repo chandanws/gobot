@@ -26,12 +26,26 @@ func TestPlaceOutOfBounds2(t *testing.T) {
 	place := Place{4, -1, EAST}
 	_, _, err := place.Execute(table)
 	if err == nil {
-		t.Errorf("putting robot out of bounds didn't cause error")
+		t.Error("putting robot out of bounds didn't cause error")
 	}
 }
 
 func TestReport(t *testing.T) {
-	//	table := Table{5, 5, Robot{4, 1, NORTH}, true}
+	table := Table{5, 5, Robot{4, 1, NORTH}, true}
+	report := *new(Report)
+	_, stdio, _ := report.Execute(table)
+	if *stdio != "4,1,NORTH" {
+		t.Errorf("Reported %s when expecting 4,1,NORTH", *stdio)
+	}
+}
+
+func TestReportOnUninitializedTable(t *testing.T) {
+	table := Table{5, 5, *new(Robot), false}
+	report := *new(Report)
+	_, _, err := report.Execute(table)
+	if err == nil {
+		t.Error("reporting robot on uninitialized table didn't cause an error")
+	}
 }
 
 func TestMoveCommand(t *testing.T) {
