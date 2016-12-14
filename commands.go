@@ -1,9 +1,12 @@
 package gobot
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Executable interface {
-	Execute(table Table) (Table, error)
+	Execute(table Table) (Table, *string, error)
 }
 
 type Place struct {
@@ -23,19 +26,22 @@ func (err outOfBoundsError) Error() string {
 	return fmt.Sprintf("Placing robot out of table (%v) x: %d y: %d", err.Table, err.x, err.y)
 }
 
-func (place Place) Execute(table Table) (Table, error) {
+func (place Place) Execute(table Table) (Table, *string, error) {
 	if !table.contains(place.x, place.y) {
-		return *new(Table), outOfBoundsError{table, place.x, place.y}
+		return *new(Table), nil, outOfBoundsError{table, place.x, place.y}
 	}
-	return Table{table.height, table.width, Robot{place.x, place.y, place.facing}, true}, nil
+	return Table{table.height, table.width, Robot{place.x, place.y, place.facing}, true}, nil, nil
 }
 
-func (moveCmd Move) Execute(table Table) (Table, error) {
+func (moveCmd Move) Execute(table Table) (Table, *string, error) {
+	if !table.initialized {
+		return *new(Table), nil, errors.New("Executing move on uninitialized table")
+	}
 	x, y := move(table.robot.x, table.robot.y, table.robot.facing)
 	if !table.contains(x, y) {
-		return *new(Table), outOfBoundsError{table, x, y}
+		return *new(Table), nil, outOfBoundsError{table, x, y}
 	}
-	return Table{table.height, table.width, Robot{x, y, table.robot.facing}, true}, nil
+	return Table{table.height, table.width, Robot{x, y, table.robot.facing}, true}, nil, nil
 }
 
 func move(x int, y int, facing Direction) (int, int) {
