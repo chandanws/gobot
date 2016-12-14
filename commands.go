@@ -24,7 +24,7 @@ func (err outOfBoundsError) Error() string {
 }
 
 func (place Place) Execute(table Table) (Table, error) {
-	if place.x >= table.width || place.y >= table.height {
+	if !table.contains(place.x, place.y) {
 		return *new(Table), outOfBoundsError{table, place.x, place.y}
 	}
 	return Table{table.height, table.width, Robot{place.x, place.y, place.facing}, true}, nil

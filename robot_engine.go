@@ -21,6 +21,11 @@ type Table struct {
 	initialized   bool
 }
 
+func (table Table) contains(x, y int) bool {
+	return x >= 0 && x < table.width &&
+		y >= 0 && y < table.height
+}
+
 type Robot struct {
 	x, y   int
 	facing Direction

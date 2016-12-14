@@ -21,6 +21,15 @@ func TestPlaceOutOfBounds(t *testing.T) {
 	}
 }
 
+func TestPlaceOutOfBounds2(t *testing.T) {
+	table := Table{5, 5, *new(Robot), false}
+	place := Place{4, -1, EAST}
+	_, err := place.Execute(table)
+	if err == nil {
+		t.Errorf("putting robot out of bounds didn't cause error")
+	}
+}
+
 func TestMoveCommand(t *testing.T) {
 	table := Table{5, 5, Robot{1, 2, SOUTH}, true}
 	move := *new(Move)
