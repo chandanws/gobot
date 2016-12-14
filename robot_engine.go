@@ -17,25 +17,27 @@ const (
 )
 
 type outOfBoundsError struct {
-	Table *Table
-	X, Y  int
+	Table Table
+	x, y  int
 }
 
 func (err outOfBoundsError) Error() string {
-	return fmt.Sprintf("Placing robot out of table (%v) x: %d y: %d", err.Table, err.X, err.Y)
+	return fmt.Sprintf("Placing robot out of table (%v) x: %d y: %d", err.Table, err.x, err.y)
 }
 
 type Table struct {
-	X, Y int
+	width, height int
+	robot         Robot
+	initialized   bool
 }
 
 type Robot struct {
-	X, Y   int
-	Facing Direction
+	x, y   int
+	facing Direction
 }
 
-func Run(table *Table, command Command, x int, y int, direction Direction) (Robot, error) {
-	if x >= table.X || y >= table.Y {
+func Run(table Table, command Command, x int, y int, direction Direction) (Robot, error) {
+	if x >= table.width || y >= table.height {
 		return *new(Robot), outOfBoundsError{table, x, y}
 	}
 	return Robot{x, y, direction}, nil
