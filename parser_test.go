@@ -26,6 +26,16 @@ func TestParsingPlace(t *testing.T) {
 	testParsePlace("PLACE 7,2,WEST", Place{7, 2, WEST}, t)
 }
 
+func TestParsingReport(t *testing.T) {
+	cmd, _ := Parse("REPORT")
+	switch cmd.(type) {
+	case Report:
+		return
+	default:
+		t.Error("REPORT didn't get parsed as command")
+	}
+}
+
 func testParsePlace(input string, command Executable, t *testing.T) {
 	cmd, _ := Parse(input)
 	switch cmd.(type) {

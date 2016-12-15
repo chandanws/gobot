@@ -8,6 +8,7 @@ import (
 
 func Parse(input string) (Executable, error) {
 	move := regexp.MustCompile(`^\s*MOVE\s*$`)
+	report := regexp.MustCompile(`^\s*REPORT\s*$`)
 	place := regexp.MustCompile(`^\s*PLACE\s(\d+),(\d+),(NORTH|EAST|SOUTH|WEST)$`)
 	switch {
 	case move.MatchString(input):
@@ -15,6 +16,8 @@ func Parse(input string) (Executable, error) {
 	case place.MatchString(input):
 		var groups []string = place.FindStringSubmatch(input)
 		return placeFromString(groups[1:]), nil
+	case report.MatchString(input):
+		return *new(Report), nil
 	default:
 		return *new(Move), fmt.Errorf("Unknown command %s", input)
 	}
