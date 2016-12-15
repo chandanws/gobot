@@ -20,13 +20,13 @@ func TestParsingRubbish(t *testing.T) {
 }
 
 func TestParsingPlace(t *testing.T) {
-	expectParsedToPlace("PLACE 10,20,NORTH", Place{10, 20, NORTH}, t)
-	expectParsedToPlace("PLACE 0,0,EAST", Place{0, 0, EAST}, t)
-	expectParsedToPlace("PLACE 2,3,SOUTH", Place{2, 3, SOUTH}, t)
-	expectParsedToPlace("PLACE 7,2,WEST", Place{7, 2, WEST}, t)
+	testParsePlace("PLACE 10,20,NORTH", Place{10, 20, NORTH}, t)
+	testParsePlace("PLACE 0,0,EAST", Place{0, 0, EAST}, t)
+	testParsePlace("PLACE 2,3,SOUTH", Place{2, 3, SOUTH}, t)
+	testParsePlace("PLACE 7,2,WEST", Place{7, 2, WEST}, t)
 }
 
-func expectParsedToPlace(input string, command Executable, t *testing.T) {
+func testParsePlace(input string, command Executable, t *testing.T) {
 	cmd, _ := Parse(input)
 	switch cmd.(type) {
 	case Place:

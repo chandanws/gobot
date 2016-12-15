@@ -1,7 +1,7 @@
 package gobot
 
 import (
-	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 )
@@ -16,8 +16,7 @@ func Parse(input string) (Executable, error) {
 		var groups []string = place.FindStringSubmatch(input)
 		return placeFromString(groups[1:]), nil
 	default:
-		//TODO put the command into a message
-		return *new(Move), errors.New("unknown command")
+		return *new(Move), fmt.Errorf("Unknown command %s", input)
 	}
 }
 
