@@ -15,17 +15,23 @@ func TestParsingMove(t *testing.T) {
 func TestParsingRubbish(t *testing.T) {
 	_, err := Parse("Rubbish")
 	if err == nil {
-		t.Error("Rubbish command didn't cause and error")
+		t.Error("Rubbish command didn't cause an error")
 	}
 }
 
 func TestParsingPlace(t *testing.T) {
-	cmd, _ := Parse("PLACE 2,3,SOUTH")
+	expectParsedToPlace("PLACE 10,20,NORTH", Place{10, 20, NORTH}, t)
+	expectParsedToPlace("PLACE 0,0,EAST", Place{0, 0, EAST}, t)
+	expectParsedToPlace("PLACE 2,3,SOUTH", Place{2, 3, SOUTH}, t)
+	expectParsedToPlace("PLACE 7,2,WEST", Place{7, 2, WEST}, t)
+}
+
+func expectParsedToPlace(input string, command Executable, t *testing.T) {
+	cmd, _ := Parse(input)
 	switch cmd.(type) {
 	case Place:
 		place := cmd.(Place)
-		expected := Place{2, 3, SOUTH}
-		if place != expected {
+		if place != command {
 			t.Errorf("The place command wasn't parsed correctly, %+v", place)
 		}
 	default:

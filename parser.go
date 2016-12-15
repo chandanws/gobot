@@ -8,7 +8,7 @@ import (
 
 func Parse(input string) (Executable, error) {
 	move := regexp.MustCompile(`^\s*MOVE\s*$`)
-	place := regexp.MustCompile(`^\s*PLACE\s(\d),(\d),(SOUTH)$`)
+	place := regexp.MustCompile(`^\s*PLACE\s(\d+),(\d+),(NORTH|EAST|SOUTH|WEST)$`)
 	switch {
 	case move.MatchString(input):
 		return *new(Move), nil
@@ -26,8 +26,14 @@ func placeFromString(groups []string) Place {
 	y, _ := strconv.Atoi(groups[1])
 	var facing Direction
 	switch groups[2] {
+	case "NORTH":
+		facing = NORTH
+	case "EAST":
+		facing = EAST
 	case "SOUTH":
 		facing = SOUTH
+	case "WEST":
+		facing = WEST
 	}
 	return Place{x, y, facing}
 }
