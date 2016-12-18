@@ -17,6 +17,9 @@ type Place struct {
 type Move struct {
 }
 
+type Left struct {
+}
+
 type Report struct {
 }
 
@@ -32,6 +35,13 @@ var directionLookup = map[Direction]string{
 	EAST:  "EAST",
 }
 
+var leftLookup = map[Direction]Direction{
+	NORTH: WEST,
+	WEST:  SOUTH,
+	SOUTH: EAST,
+	EAST:  NORTH,
+}
+
 func (r Report) Execute(table Table) (Table, *string, error) {
 	if !table.initialized {
 		return *new(Table), nil, errors.New("Executing move on uninitialized table")
@@ -39,6 +49,12 @@ func (r Report) Execute(table Table) (Table, *string, error) {
 	robot := table.robot
 	report := fmt.Sprintf("%d,%d,%s", robot.x, robot.y, directionLookup[robot.facing])
 	return table, &report, nil
+}
+
+func (r Left) Execute(table Table) (Table, *string, error) {
+	oldRobot := table.robot
+	newRobot := Robot{oldRobot.x, oldRobot.y, leftLookup[oldRobot.facing]}
+	return Table{table.height, table.width, newRobot, true}, nil, nil
 }
 
 func (err outOfBoundsError) Error() string {

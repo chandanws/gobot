@@ -41,7 +41,7 @@ func TestReport(t *testing.T) {
 		t.Errorf("Reported %s when expecting 4,1,NORTH", *stdio)
 	}
 	if newTable != table {
-		t.Error("unsucessful place command changed table")
+		t.Error("unsucessful report command changed table")
 	}
 }
 
@@ -67,9 +67,12 @@ func TestMoveCommand(t *testing.T) {
 func TestMoveCommandOutOfBounds(t *testing.T) {
 	table := Table{5, 5, Robot{1, 0, SOUTH}, true}
 	move := *new(Move)
-	_, _, err := move.Execute(table)
+	newTable, _, err := move.Execute(table)
 	if err == nil {
 		t.Error("moving robot out of bounds didn't cause error")
+	}
+	if newTable != table {
+		t.Error("unsucessful report command changed table")
 	}
 }
 
@@ -107,5 +110,14 @@ func TestMoveWest(t *testing.T) {
 	x, y := move(1, 1, WEST)
 	if x != 0 || y != 1 {
 		t.Errorf("moved to %d,%d instad of 0,1", x, y)
+	}
+}
+
+func TestLeft(t *testing.T) {
+	table := Table{5, 5, Robot{1, 2, SOUTH}, true}
+	left := Left{}
+	newTable, _, _ := left.Execute(table)
+	if newTable.robot.facing != EAST {
+		t.Error("Robot didn't turn left")
 	}
 }
