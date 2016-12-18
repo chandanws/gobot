@@ -46,12 +46,8 @@ func TestReport(t *testing.T) {
 }
 
 func TestReportOnUninitializedTable(t *testing.T) {
-	table := Table{5, 5, *new(Robot), false}
 	report := *new(Report)
-	_, _, err := report.Execute(table)
-	if err == nil {
-		t.Error("reporting robot on uninitialized table didn't cause an error")
-	}
+	testUninitialized(report, "report", t)
 }
 
 func TestMoveCommand(t *testing.T) {
@@ -77,12 +73,8 @@ func TestMoveCommandOutOfBounds(t *testing.T) {
 }
 
 func TestMoveOnUninitializedTable(t *testing.T) {
-	table := Table{5, 5, *new(Robot), false}
 	move := *new(Move)
-	_, _, err := move.Execute(table)
-	if err == nil {
-		t.Error("moving robot on uninitialized table didn't cause an error")
-	}
+	testUninitialized(move, "move", t)
 }
 
 func TestMoveNorth(t *testing.T) {
@@ -114,10 +106,39 @@ func TestMoveWest(t *testing.T) {
 }
 
 func TestLeft(t *testing.T) {
-	table := Table{5, 5, Robot{1, 2, SOUTH}, true}
 	left := Left{}
-	newTable, _, _ := left.Execute(table)
-	if newTable.robot.facing != EAST {
-		t.Error("Robot didn't turn left")
+	table := Table{5, 5, Robot{1, 2, SOUTH}, true}
+	expected := Table{5, 5, Robot{1, 2, EAST}, true}
+	testCommand(left, "left", table, expected, t)
+}
+
+func TestLeftUninitialized(t *testing.T) {
+	left := Left{}
+	testUninitialized(left, "left", t)
+}
+
+func testCommand(e Executable, name string, table Table, expected Table, t *testing.T) {
+	newTable, _, _ := e.Execute(table)
+	if newTable != expected {
+		t.Errorf(
+			"Command %s%v failed, it transformed table %v to %v instead %v",
+			name,
+			e,
+			table,
+			newTable,
+			expected,
+		)
+	}
+}
+
+func testUninitialized(e Executable, name string, t *testing.T) {
+	table := Table{5, 5, Robot{1, 2, SOUTH}, false}
+	_, _, err := e.Execute(table)
+	if err == nil {
+		t.Errorf(
+			"Command %s%v failed, it was sucessfuly run on uninitialized table",
+			name,
+			e,
+		)
 	}
 }

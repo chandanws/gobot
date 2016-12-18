@@ -44,7 +44,7 @@ var leftLookup = map[Direction]Direction{
 
 func (r Report) Execute(table Table) (Table, *string, error) {
 	if !table.initialized {
-		return *new(Table), nil, errors.New("Executing move on uninitialized table")
+		return *new(Table), nil, errors.New("Executing report on uninitialized table")
 	}
 	robot := table.robot
 	report := fmt.Sprintf("%d,%d,%s", robot.x, robot.y, directionLookup[robot.facing])
@@ -52,6 +52,9 @@ func (r Report) Execute(table Table) (Table, *string, error) {
 }
 
 func (r Left) Execute(table Table) (Table, *string, error) {
+	if !table.initialized {
+		return table, nil, errors.New("Executing left on uninitialized table")
+	}
 	oldRobot := table.robot
 	newRobot := Robot{oldRobot.x, oldRobot.y, leftLookup[oldRobot.facing]}
 	return Table{table.height, table.width, newRobot, true}, nil, nil
