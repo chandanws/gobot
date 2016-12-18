@@ -2,14 +2,20 @@ package gobot
 
 import "testing"
 
+type testCase struct {
+	e               Executable
+	name            string
+	table, expected Table
+}
+
 func TestPlaceCommand(t *testing.T) {
-	table := Table{5, 5, *new(Robot), false}
-	place := Place{1, 2, SOUTH}
-	newTable, _, _ := place.Execute(table)
-	expectedTable := Table{5, 5, Robot{1, 2, SOUTH}, true}
-	if newTable != expectedTable {
-		t.Errorf("table %+v is not equal %+v", newTable, expectedTable)
+	tc := testCase{
+		Place{1, 2, SOUTH},
+		"place",
+		Table{5, 5, *new(Robot), false},
+		Table{5, 5, Robot{1, 2, SOUTH}, true},
 	}
+	testCommands(t, tc)
 }
 
 func TestPlaceOutOfBounds(t *testing.T) {
@@ -51,13 +57,25 @@ func TestReportOnUninitializedTable(t *testing.T) {
 }
 
 func TestMoveCommand(t *testing.T) {
-	table := Table{5, 5, Robot{1, 2, SOUTH}, true}
 	move := *new(Move)
-	newTable, _, _ := move.Execute(table)
-	expectedTable := Table{5, 5, Robot{1, 1, SOUTH}, true}
-	if newTable != expectedTable {
-		t.Errorf("table %+v is not equal %+v", newTable, expectedTable)
-	}
+	testCommands(t,
+		testCase{move, "move",
+			Table{5, 5, Robot{1, 2, SOUTH}, true},
+			Table{5, 5, Robot{1, 1, SOUTH}, true},
+		},
+		testCase{move, "move",
+			Table{5, 5, Robot{0, 0, NORTH}, true},
+			Table{5, 5, Robot{0, 1, NORTH}, true},
+		},
+		testCase{move, "move",
+			Table{5, 5, Robot{1, 1, EAST}, true},
+			Table{5, 5, Robot{2, 1, EAST}, true},
+		},
+		testCase{move, "move",
+			Table{5, 5, Robot{1, 1, WEST}, true},
+			Table{5, 5, Robot{0, 1, WEST}, true},
+		},
+	)
 }
 
 func TestMoveCommandOutOfBounds(t *testing.T) {
@@ -77,39 +95,14 @@ func TestMoveOnUninitializedTable(t *testing.T) {
 	testUninitialized(move, "move", t)
 }
 
-func TestMoveNorth(t *testing.T) {
-	x, y := move(0, 0, NORTH)
-	if x != 0 || y != 1 {
-		t.Errorf("moved to %d,%d instad of 0,1", x, y)
-	}
-}
-
-func TestMoveEast(t *testing.T) {
-	x, y := move(1, 1, EAST)
-	if x != 2 || y != 1 {
-		t.Errorf("moved to %d,%d instad of 0,1", x, y)
-	}
-}
-
-func TestMoveSouth(t *testing.T) {
-	x, y := move(2, 2, SOUTH)
-	if x != 2 || y != 1 {
-		t.Errorf("moved to %d,%d instad of 0,1", x, y)
-	}
-}
-
-func TestMoveWest(t *testing.T) {
-	x, y := move(1, 1, WEST)
-	if x != 0 || y != 1 {
-		t.Errorf("moved to %d,%d instad of 0,1", x, y)
-	}
-}
-
 func TestLeft(t *testing.T) {
-	left := Left{}
-	table := Table{5, 5, Robot{1, 2, SOUTH}, true}
-	expected := Table{5, 5, Robot{1, 2, EAST}, true}
-	testCommand(left, "left", table, expected, t)
+	tc := testCase{
+		Left{},
+		"left",
+		Table{5, 5, Robot{1, 2, SOUTH}, true},
+		Table{5, 5, Robot{1, 2, EAST}, true},
+	}
+	testCommands(t, tc)
 }
 
 func TestLeftUninitialized(t *testing.T) {
@@ -117,17 +110,19 @@ func TestLeftUninitialized(t *testing.T) {
 	testUninitialized(left, "left", t)
 }
 
-func testCommand(e Executable, name string, table Table, expected Table, t *testing.T) {
-	newTable, _, _ := e.Execute(table)
-	if newTable != expected {
-		t.Errorf(
-			"Command %s%v failed, it transformed table %v to %v instead %v",
-			name,
-			e,
-			table,
-			newTable,
-			expected,
-		)
+func testCommands(t *testing.T, testCases ...testCase) {
+	for _, tc := range testCases {
+		newTable, _, _ := tc.e.Execute(tc.table)
+		if newTable != tc.expected {
+			t.Errorf(
+				"Command %s%v failed, it transformed table %v to %v instead %v",
+				tc.name,
+				tc.e,
+				tc.table,
+				newTable,
+				tc.expected,
+			)
+		}
 	}
 }
 
