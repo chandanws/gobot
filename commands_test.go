@@ -96,13 +96,28 @@ func TestMoveOnUninitializedTable(t *testing.T) {
 }
 
 func TestLeft(t *testing.T) {
-	tc := testCase{
-		Left{},
-		"left",
-		Table{5, 5, Robot{1, 2, SOUTH}, true},
-		Table{5, 5, Robot{1, 2, EAST}, true},
-	}
-	testCommands(t, tc)
+	testCommands(t,
+		testCase{
+			Left{}, "left",
+			Table{5, 5, Robot{1, 2, SOUTH}, true},
+			Table{5, 5, Robot{1, 2, EAST}, true},
+		},
+		testCase{
+			Left{}, "left",
+			Table{5, 5, Robot{1, 2, EAST}, true},
+			Table{5, 5, Robot{1, 2, NORTH}, true},
+		},
+		testCase{
+			Left{}, "left",
+			Table{5, 5, Robot{1, 2, NORTH}, true},
+			Table{5, 5, Robot{1, 2, WEST}, true},
+		},
+		testCase{
+			Left{}, "left",
+			Table{5, 5, Robot{1, 2, WEST}, true},
+			Table{5, 5, Robot{1, 2, SOUTH}, true},
+		},
+	)
 }
 
 func TestLeftUninitialized(t *testing.T) {
