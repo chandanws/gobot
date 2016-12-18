@@ -125,6 +125,35 @@ func TestLeftUninitialized(t *testing.T) {
 	testUninitialized(left, "left", t)
 }
 
+func TestRight(t *testing.T) {
+	testCommands(t,
+		testCase{
+			Right{}, "right",
+			Table{5, 5, Robot{1, 2, EAST}, true},
+			Table{5, 5, Robot{1, 2, SOUTH}, true},
+		},
+		testCase{
+			Right{}, "right",
+			Table{5, 5, Robot{1, 2, NORTH}, true},
+			Table{5, 5, Robot{1, 2, EAST}, true},
+		},
+		testCase{
+			Right{}, "right",
+			Table{5, 5, Robot{1, 2, WEST}, true},
+			Table{5, 5, Robot{1, 2, NORTH}, true},
+		},
+		testCase{
+			Right{}, "right",
+			Table{5, 5, Robot{1, 2, SOUTH}, true},
+			Table{5, 5, Robot{1, 2, WEST}, true},
+		},
+	)
+}
+
+func TestRigthUninitialized(t *testing.T) {
+	testUninitialized(Right{}, "right", t)
+}
+
 func testCommands(t *testing.T, testCases ...testCase) {
 	for _, tc := range testCases {
 		newTable, _, _ := tc.e.Execute(tc.table)

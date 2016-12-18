@@ -20,6 +20,9 @@ type Move struct {
 type Left struct {
 }
 
+type Right struct {
+}
+
 type Report struct {
 }
 
@@ -42,6 +45,13 @@ var leftLookup = map[Direction]Direction{
 	EAST:  NORTH,
 }
 
+var rightLookup = map[Direction]Direction{
+	WEST:  NORTH,
+	NORTH: EAST,
+	EAST:  SOUTH,
+	SOUTH: WEST,
+}
+
 func (r Report) Execute(table Table) (Table, *string, error) {
 	if !table.initialized {
 		return *new(Table), nil, errors.New("Executing report on uninitialized table")
@@ -51,12 +61,21 @@ func (r Report) Execute(table Table) (Table, *string, error) {
 	return table, &report, nil
 }
 
-func (r Left) Execute(table Table) (Table, *string, error) {
+func (l Left) Execute(table Table) (Table, *string, error) {
 	if !table.initialized {
 		return table, nil, errors.New("Executing left on uninitialized table")
 	}
 	oldRobot := table.robot
 	newRobot := Robot{oldRobot.x, oldRobot.y, leftLookup[oldRobot.facing]}
+	return Table{table.height, table.width, newRobot, true}, nil, nil
+}
+
+func (r Right) Execute(table Table) (Table, *string, error) {
+	if !table.initialized {
+		return table, nil, errors.New("Executing right on uninitialized table")
+	}
+	oldRobot := table.robot
+	newRobot := Robot{oldRobot.x, oldRobot.y, rightLookup[oldRobot.facing]}
 	return Table{table.height, table.width, newRobot, true}, nil, nil
 }
 
