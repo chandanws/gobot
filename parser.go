@@ -8,11 +8,14 @@ import (
 
 func Parse(input string) (Executable, error) {
 	move := regexp.MustCompile(`^\s*MOVE\s*$`)
+	left := regexp.MustCompile(`^\s*LEFT\s*$`)
 	report := regexp.MustCompile(`^\s*REPORT\s*$`)
 	place := regexp.MustCompile(`^\s*PLACE\s(\d+),(\d+),(NORTH|EAST|SOUTH|WEST)$`)
 	switch {
 	case move.MatchString(input):
 		return *new(Move), nil
+	case left.MatchString(input):
+		return *new(Left), nil
 	case place.MatchString(input):
 		var groups []string = place.FindStringSubmatch(input)
 		return placeFromString(groups[1:]), nil

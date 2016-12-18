@@ -12,6 +12,16 @@ func TestParsingMove(t *testing.T) {
 	}
 }
 
+func TestParsingLeft(t *testing.T) {
+	cmd, _ := Parse("LEFT")
+	switch cmd.(type) {
+	case Left:
+		return
+	default:
+		t.Error("The command wasn't parsed as left")
+	}
+}
+
 func TestParsingRubbish(t *testing.T) {
 	_, err := Parse("Rubbish")
 	if err == nil {
