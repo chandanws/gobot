@@ -12,9 +12,12 @@ func RunEngine(in io.Reader, out io.Writer) error {
 	table := Table{5, 5, *new(Robot), false}
 	var output *string
 	for scanner.Scan() {
-		command, _ := Parse(scanner.Text())
-		fmt.Println(command)
 		var err error
+		command, err := Parse(scanner.Text())
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 		table, output, err = command.Execute(table)
 		if output != nil {
 			writeOutput(bufWriter, output)

@@ -8,12 +8,18 @@ import (
 )
 
 func TestE2E(t *testing.T) {
-	reader := strings.NewReader("PLACE 0,0,NORTH\nREPORT")
+	testE2E("PLACE 0,0,NORTH\nREPORT", "0,0,NORTH", t)
+	testE2E("PLACE 0,0,NORTH\nMOVE\nREPORT", "0,1,NORTH", t)
+	testE2E("PLACE 0,0,NORTH\nRUBBISH\nREPORT", "0,0,NORTH", t)
+}
+
+func testE2E(input string, output string, t *testing.T) {
+	reader := strings.NewReader(input)
 	var buffer bytes.Buffer
 	writer := bufio.NewWriter(&buffer)
 	RunEngine(reader, writer)
 	result := buffer.String()
-	if result != "0,0,NORTH" {
-		t.Errorf("Engine returned invalid result (%s) instead of 0,0,NORTH", result)
+	if result != output {
+		t.Errorf("Engine returned invalid result %s instead of %s", result, output)
 	}
 }

@@ -22,20 +22,26 @@ func TestPlaceOutOfBounds(t *testing.T) {
 }
 
 func TestPlaceOutOfBounds2(t *testing.T) {
-	table := Table{5, 5, *new(Robot), false}
+	table := Table{5, 5, Robot{1, 1, SOUTH}, false}
 	place := Place{4, -1, EAST}
-	_, _, err := place.Execute(table)
+	newTable, _, err := place.Execute(table)
 	if err == nil {
 		t.Error("putting robot out of bounds didn't cause error")
+	}
+	if newTable != table {
+		t.Error("unsucessful place command changed table")
 	}
 }
 
 func TestReport(t *testing.T) {
 	table := Table{5, 5, Robot{4, 1, NORTH}, true}
 	report := *new(Report)
-	_, stdio, _ := report.Execute(table)
+	newTable, stdio, _ := report.Execute(table)
 	if *stdio != "4,1,NORTH" {
 		t.Errorf("Reported %s when expecting 4,1,NORTH", *stdio)
+	}
+	if newTable != table {
+		t.Error("unsucessful place command changed table")
 	}
 }
 
