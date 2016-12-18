@@ -16,16 +16,13 @@ func RunEngine(in io.Reader, out io.Writer) error {
 		fmt.Println(command)
 		var err error
 		table, output, err = command.Execute(table)
-		fmt.Printf("executed table %+v", table)
 		if output != nil {
-			fmt.Printf("executed output %s\n", *output)
 			writeOutput(bufWriter, output)
 		}
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
-	bufWriter.Flush()
 	return nil
 }
 
@@ -35,4 +32,5 @@ func writeOutput(out *bufio.Writer, output *string) {
 		panic("writing of output failed")
 	}
 	output = nil
+	out.Flush()
 }
