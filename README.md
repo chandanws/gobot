@@ -12,6 +12,10 @@ Get the code
 
 `go get github.com/viktomas/gobot`
 
+go to the cmd package
+
+`cd $GOPATH/github.com/viktomas/gobot/cmd/gobot`
+
 and then install
 
 `go install`
