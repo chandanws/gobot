@@ -29,19 +29,16 @@ func Parse(input string) (Executable, error) {
 	}
 }
 
+var directionTokenLookup = map[string]Direction{
+	"NORTH": NORTH,
+	"EAST":  EAST,
+	"SOUTH": SOUTH,
+	"WEST":  WEST,
+}
+
 func placeFromString(groups []string) Place {
 	x, _ := strconv.Atoi(groups[0])
 	y, _ := strconv.Atoi(groups[1])
-	var facing Direction
-	switch groups[2] {
-	case "NORTH":
-		facing = NORTH
-	case "EAST":
-		facing = EAST
-	case "SOUTH":
-		facing = SOUTH
-	case "WEST":
-		facing = WEST
-	}
+	facing := directionTokenLookup[groups[2]]
 	return Place{x, y, facing}
 }
